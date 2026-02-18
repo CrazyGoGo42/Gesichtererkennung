@@ -18,3 +18,6 @@ for i in range(30):
     img = cv2.resize(img, (512, 512))
     face_databank[i] = img
 
+np.save("data.npy", face_databank)
+
+face_databank = np.load("data.npy")
