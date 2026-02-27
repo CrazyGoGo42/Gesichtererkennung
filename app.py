@@ -31,8 +31,31 @@ for i in range(30):
 
 np.save("binary_data.npy", binary_face_databank)
 
-# for i in range(30):                                             Zeigt die Bilder
-#     cv2.imshow(f"Binary Face {i+1}", binary_face_databank[i])
-#     cv2.waitKey(0)
-# cv2.destroyAllWindows()
 
+def lbp(image):
+    lbp_image = np.zeros_like(image, dtype=np.uint8)
+
+    for i in range(1, image.shape[0] - 1):
+        for j in range(1, image.shape[1] - 1):
+            center = image[i, j]
+
+            code = 0
+            code |= (image[i-1, j-1] >= center) << 7
+            code |= (image[i-1, j]   >= center) << 6
+            code |= (image[i-1, j+1] >= center) << 5
+            code |= (image[i, j+1]   >= center) << 4
+            code |= (image[i+1, j+1] >= center) << 3
+            code |= (image[i+1, j]   >= center) << 2
+            code |= (image[i+1, j-1] >= center) << 1
+            code |= (image[i, j-1]   >= center) << 0
+
+            lbp_image[i, j] = code
+
+    return lbp_image
+
+# TEST!!!! imshow with range 3:
+for i in range(3):
+    lbp_image = lbp(face_databank[i])
+    cv2.imshow(f"LBP Image {i+1}", lbp_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
