@@ -8,7 +8,7 @@ DATENBANK_DIR = os.path.join(SCRIPT_DIR, "face_database")  # face_database/perso
 GRID_GROESSE  = 8     # Bild in 8x8 Grids aufteilen
 BINS          = 256   # 256 Bins pro Histogramm -> 64 * 256 = 16384 Features
 BILD_GROESSE  = 256   # Einheitliche Bildgröße
-TESTBILD_PFAD = os.path.join(SCRIPT_DIR, "testbild.png")
+TESTBILD_PFAD = os.path.join(SCRIPT_DIR, "testbild.jpg")
 
 
 # region LBP – Local Binary Pattern (eigene Implementierung, kein OpenCV)
@@ -293,11 +293,22 @@ if __name__ == "__main__":
             print(f"  Erkannte Person     : {name}  (Label: {label})")
             print(f"  Chi-Quadrat-Distanz : {distanz:.6f}")
 
-            testbild_anzeige = cv2.imread(TESTBILD_PFAD, cv2.IMREAD_GRAYSCALE)
-            plt.figure(figsize=(4, 4))
-            plt.imshow(testbild_anzeige, cmap="gray")
-            plt.title(f"Testbild -> Erkannt als: {name}\nDistanz: {distanz:.4f}")
-            plt.axis("off")
+            # Testbild und erkanntes Datenbankbild nebeneinander anzeigen
+            testbild_anzeige  = cv2.imread(TESTBILD_PFAD, cv2.IMREAD_GRAYSCALE)
+            datenbank_bild    = cv2.imread(
+                os.path.join(DATENBANK_DIR, name, "img1.jpg"), cv2.IMREAD_GRAYSCALE
+            )
+
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
+
+            ax1.imshow(testbild_anzeige, cmap="gray")
+            ax1.set_title("Testbild")
+            ax1.axis("off")
+
+            ax2.imshow(datenbank_bild, cmap="gray")
+            ax2.set_title(f"Beste Übereinstimmung:\n{name}  (Distanz: {distanz:.4f})")
+            ax2.axis("off")
+
             plt.tight_layout()
             plt.show()
 
