@@ -179,6 +179,7 @@ if __name__ == "__main__":
         if not os.path.isdir(person_pfad):
             continue
 
+        bilder_geladen = 0
         for bild_datei in sorted(os.listdir(person_pfad)):
             bild_pfad = os.path.join(person_pfad, bild_datei)
 
@@ -199,10 +200,14 @@ if __name__ == "__main__":
             X_features.append(feature_vektor)
             y_labels.append(person_label)
             label_map[person_label] = person_name
+            bilder_geladen += 1
 
             print(f"  {person_name}: Feature-Länge = {len(feature_vektor)}")
 
-        person_label += 1
+        if bilder_geladen > 0:
+            person_label += 1
+        else:
+            print(f"  [WARNUNG] {person_name}: Keine Bilder geladen – Ordner wird übersprungen.")
 
     X_features = np.array(X_features)  # Form: (Anzahl Bilder, 16384)
     y_labels   = np.array(y_labels)
@@ -267,7 +272,7 @@ if __name__ == "__main__":
     vorhergesagte_labels = np.array(vorhergesagte_labels)
 
     accuracy = berechne_accuracy(wahre_labels, vorhergesagte_labels)
-    cm       = berechne_confusion_matrix(wahre_labels, vorhergesagte_labels, len(label_map))
+    cm       = berechne_confusion_matrix(wahre_labels, vorhergesagte_labels, int(max(wahre_labels)) + 1)
 
     print(f"  Accuracy       : {accuracy * 100:.2f}%")
     print(f"  Confusion Matrix ({cm.shape[0]}x{cm.shape[1]}):")
